@@ -1,0 +1,9 @@
+pandas
+numpy
+scikit-learn
+tensorflow
+xgboost
+pytest
+matplotlib
+typeguard==2.13.3
+typing-extensions>=4.6.0
