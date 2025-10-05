@@ -64,9 +64,9 @@ class StrategyDebugger:
         plt.grid(True)
         plt.legend()
         plt.tight_layout()
-        plt.show()
         if save_path:
             plt.savefig(save_path, dpi=300)
+        plt.show()
 
     def summarize_issues(self, threshold_pct_drop=5.0, window=5):
         issues_df = self.identify_loss_periods(threshold_pct_drop=threshold_pct_drop, window=window)
