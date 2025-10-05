@@ -60,7 +60,8 @@ class TestMLTradingIntegration(unittest.TestCase):
         print("=" * 60)
 
         # Check for required data file
-        cls.data_file = '/Users/yuhualu24/Desktop/Trading_System_Project/test/100_stocks_data_by_Apr_2025.csv'
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        cls.data_file = os.path.join(test_dir, '100_stocks_data_by_Apr_2025.csv')
         if not os.path.exists(cls.data_file):
             raise FileNotFoundError(
                 f"Required data file not found: {cls.data_file}"
