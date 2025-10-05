@@ -25,8 +25,6 @@ The test will:
 4. Execute trading strategies
 5. Generate debug visualizations
 6. Save performance metrics
-
-Author:
 """
 
 import unittest
@@ -34,6 +32,7 @@ import sys
 import os
 import time
 import datetime
+import random
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -61,19 +60,17 @@ class TestMLTradingIntegration(unittest.TestCase):
         print("=" * 60)
 
         # Check for required data file
-        cls.data_file = 'your_stock_data_file_path'
+        cls.data_file = '/Users/yuhualu24/Desktop/Trading_System_Project/test/100_stocks_data_by_Apr_2025.csv'
         if not os.path.exists(cls.data_file):
             raise FileNotFoundError(
-                f"Required data file not found: {cls.data_file}\n"
-                "Please ensure sample_candlestick_data.csv is in the current directory.\n"
-                "You can generate it using the stock data generator script."
+                f"Required data file not found: {cls.data_file}"
             )
 
-        print(f"✓ Data file found: {cls.data_file}")
+        print(f"Data file found: {cls.data_file}")
 
         cls.output_dir = os.path.join(os.getcwd(), "test_results")
         os.makedirs(cls.output_dir, exist_ok=True)
-        print(f"✓ Output directory: {cls.output_dir}")
+        print(f"Output directory: {cls.output_dir}")
 
     def test_complete_trading_pipeline(self):
         """
@@ -90,13 +87,12 @@ class TestMLTradingIntegration(unittest.TestCase):
         print("\n1. Loading stock data...")
         try:
             raw_data = pd.read_csv(self.data_file)
-            # Add column names based on expected format
             raw_data.columns = [
                 'code', 'name', 'time_key', 'open', 'close', 'high', 'low',
                 'pe_ratio', 'turnover_rate', 'volume', 'turnover', 'change_rate', 'last_close'
             ]
-            print(f"✓ Loaded {len(raw_data):,} records for {raw_data['code'].nunique()} stocks")
-            print(f"✓ Date range: {raw_data['time_key'].min()} to {raw_data['time_key'].max()}")
+            print(f"Loaded {len(raw_data):,} records for {raw_data['code'].nunique()} stocks")
+            print(f"Date range: {raw_data['time_key'].min()} to {raw_data['time_key'].max()}")
         except Exception as e:
             self.fail(f"Failed to load data: {e}")
 
@@ -109,9 +105,9 @@ class TestMLTradingIntegration(unittest.TestCase):
             feature_engineer = FeatureEngineering(raw_data, macd_fast, macd_slow, macd_signal)
             labeler = LabelingHelper(feature_engineer.stock_data)
 
-            print(f"✓ Features engineered successfully")
-            print(f"✓ Training data shape: {labeler.classification_training_data.shape}")
-            print(f"✓ Original data shape: {labeler.original_data.shape}")
+            print(f"Features engineered successfully")
+            print(f"Training data shape: {labeler.classification_training_data.shape}")
+            print(f"Original data shape: {labeler.original_data.shape}")
         except Exception as e:
             self.fail(f"Failed in feature engineering: {e}")
 
@@ -126,7 +122,7 @@ class TestMLTradingIntegration(unittest.TestCase):
             )
             rf_classifier.train()
             print(
-                f"✓ Random Forest - Train: {rf_classifier.train_accuracy:.3f}, Test: {rf_classifier.test_accuracy:.3f}")
+                f"Random Forest - Train: {rf_classifier.train_accuracy:.3f}, Test: {rf_classifier.test_accuracy:.3f}")
 
             # Train XGBoost classifier
             xgb_classifier = ClassificationModel(
@@ -135,7 +131,7 @@ class TestMLTradingIntegration(unittest.TestCase):
                 model_type='xgboost'
             )
             xgb_classifier.train()
-            print(f"✓ XGBoost - Train: {xgb_classifier.train_accuracy:.3f}, Test: {xgb_classifier.test_accuracy:.3f}")
+            print(f"XGBoost - Train: {xgb_classifier.train_accuracy:.3f}, Test: {xgb_classifier.test_accuracy:.3f}")
 
         except Exception as e:
             self.fail(f"Failed in model training: {e}")
@@ -148,9 +144,9 @@ class TestMLTradingIntegration(unittest.TestCase):
             ml_strategy = TradingStrategy(rf_classifier.full_data, 'ML')
             combined_strategy = TradingStrategy(rf_classifier.full_data, 'COMBINED')
 
-            print("✓ MACD strategy created")
-            print("✓ ML strategy created")
-            print("✓ Combined strategy created")
+            print("MACD strategy created")
+            print("ML strategy created")
+            print("Combined strategy created")
         except Exception as e:
             self.fail(f"Failed in strategy creation: {e}")
 
@@ -161,7 +157,7 @@ class TestMLTradingIntegration(unittest.TestCase):
             ml_trader = Trader(ml_strategy.data)
             combined_trader = Trader(combined_strategy.data)
 
-            print("✓ All trading strategies executed successfully")
+            print("All trading strategies executed successfully")
         except Exception as e:
             self.fail(f"Failed in strategy execution: {e}")
 
@@ -170,8 +166,8 @@ class TestMLTradingIntegration(unittest.TestCase):
         try:
             # Select random stock for visualization
             available_stocks = macd_trader.data['name'].unique()
-            test_stock = available_stocks[0]  # Use first stock for consistency
-            print(f"✓ Using stock for visualization: {test_stock}")
+            test_stock = random.choice(available_stocks)
+            print(f"Using stock for visualization: {test_stock}")
 
             # Generate timestamp for unique filenames
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -189,10 +185,10 @@ class TestMLTradingIntegration(unittest.TestCase):
 
             for strategy_data, trader, strategy_name in strategies_and_names:
                 debugger = StrategyDebugger(strategy_data, trader)
-                plot_path = os.path.join(self.output_dir, f'{strategy_name}_strategy_debug_{timestamp}.png')
+                plot_path = os.path.join(self.output_dir, f'{strategy_name}_strategy_{timestamp}.png')
 
                 debugger.visualize_issue_segment(test_stock, debug_start_date, debug_end_date, plot_path)
-                print(f"✓ {strategy_name.upper()} strategy visualization saved")
+                print(f"{strategy_name.upper()} strategy visualization saved")
 
         except Exception as e:
             print(f"Warning: Visualization generation failed: {e}")
@@ -227,7 +223,7 @@ class TestMLTradingIntegration(unittest.TestCase):
                 }
                 performance_data.append(strategy_performance)
 
-                print(f"✓ {strategy_name}: Final Value ${final_portfolio_value:,.2f}, Sharpe {annualized_sharpe:.3f}")
+                print(f"{strategy_name}: Final Value ${final_portfolio_value:,.2f}, Sharpe {annualized_sharpe:.3f}")
 
             # Save detailed results to log file
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -256,13 +252,13 @@ class TestMLTradingIntegration(unittest.TestCase):
                     f.write(f"  Daily Sharpe Ratio: {perf['daily_sharpe_ratio']:.5f}\n")
                     f.write(f"  Annualized Sharpe Ratio: {perf['annualized_sharpe_ratio']:.5f}\n")
 
-            print(f"✓ Detailed results saved to: {log_file}")
+            print(f"Detailed results saved to: {log_file}")
 
         except Exception as e:
             self.fail(f"Failed in performance calculation: {e}")
 
-        print(f"\n✓ Integration test completed successfully in {pipeline_runtime} seconds!")
-        print(f"✓ Results saved to: {self.output_dir}")
+        print(f"\nIntegration test completed successfully in {pipeline_runtime} seconds!")
+        print(f"Results saved to: {self.output_dir}")
 
     def test_data_integrity(self):
         """
@@ -296,7 +292,7 @@ class TestMLTradingIntegration(unittest.TestCase):
         self.assertTrue((raw_data['high'] >= raw_data['low']).all(), "High should be >= Low")
         self.assertTrue((raw_data['volume'] >= 0).all(), "Volume should be non-negative")
 
-        print("✓ Data integrity validation passed")
+        print("Data integrity validation passed")
 
     @classmethod
     def tearDownClass(cls):
