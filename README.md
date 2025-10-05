@@ -4,7 +4,6 @@ This project explores a machine learning driven trading system that uses classif
 technical indicators to generate BUY/HOLD/SELL signals for stock trading. Results suggest that ML-based models capture 
 market patterns much more effectively than traditional MACD-based approaches.
 
-
 ## 🎯 Overview
 
 This system combines:
@@ -27,11 +26,34 @@ and generates **next-day trading signals** (BUY/HOLD/SELL) with detailed perform
 - **Performance Visualization**: In-depth charts for examining stock-level trading decisions and portfolio evolution
 - **Comprehensive Testing**: Full integration test suite
 
-## 📊 Required Data Format
+## 🧪 Testing the System
 
-### Input Data Columns
+### Quick Start Test
+The repository includes a comprehensive integration test with sample data (100 stocks through April 2025) to validate the entire ML trading pipeline:
 
-Your stock data CSV file must contain the following columns:
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run test (from project root)
+python test/test_int.py
+```
+
+### What Gets Tested
+- Complete ML trading pipeline from data loading to performance evaluation
+- Feature engineering with technical indicators (MACD, RSI, moving averages)
+- Model training (Random Forest and XGBoost classifiers)
+- Three trading strategies: MACD, ML, and Combined
+- Performance metrics including Sharpe ratios and portfolio values
+
+### Test Output
+Results are saved to `test/test_results/` including:
+- Performance report with detailed metrics
+- Trading signal visualization charts
+
+## 📊 Using Your Own Data
+
+If you want to test the system with your own stock data, make sure your CSV file follows this format:
 
 | Column | Name | Type | Description | Example |
 |--------|------|------|-------------|--------|
