@@ -12,7 +12,7 @@ strategy execution and performance evaluation. It tests the integration of:
 - Performance metrics calculation
 
 Requirements:
-- sample_candlestick_data.csv in the current directory
+- 100_stocks_data_by_Apr_2025.csv in the same directory as this test file
 - All Trading/, Models/, and Feature/ modules accessible
 
 Quick Start:
@@ -69,7 +69,7 @@ class TestMLTradingIntegration(unittest.TestCase):
 
         print(f"Data file found: {cls.data_file}")
 
-        cls.output_dir = os.path.join(os.getcwd(), "test_results")
+        cls.output_dir = os.path.join(test_dir, "test_results")
         os.makedirs(cls.output_dir, exist_ok=True)
         print(f"Output directory: {cls.output_dir}")
 
